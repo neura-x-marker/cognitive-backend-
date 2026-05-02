@@ -1,9 +1,23 @@
-"""
-Serializers package initialization.
+from django.contrib.auth.models import User
+from rest_framework import serializers
+from django.contrib.auth import authenticate
 
-Usage:
-1. Create a new file for your serializers (e.g., `api/serializers/user_serializers.py`).
-2. Define your serializer classes inside that file.
-3. Import them here to make them available at the package level:
-   `from .user_serializers import UserSerializer`
-"""
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if not user:
+            raise serializers.ValidationError("Invalid credentials")
+        return user
