@@ -1,7 +1,19 @@
-from django.urls import path
-from .views import register, login
+"""
+URLs package initialization.
+
+Usage:
+1. Create a new file for specific URL patterns (e.g., `api/urls/auth_urls.py`).
+2. Define a `urlpatterns` list in that file.
+3. Import and include them here to aggregate all routes.
+
+Example:
+   from .auth_urls import urlpatterns as auth_patterns
+   urlpatterns = [] + auth_patterns
+"""
+
+from django.urls import path, include
+from .auth import urlpatterns as auth_urlpatterns
 
 urlpatterns = [
-    path('register/', register),
-    path('login/', login),
+    path('auth/', include((auth_urlpatterns, 'auth'), namespace='auth')),
 ]
